@@ -1,0 +1,14 @@
+# Ignorar arquivo de variáveis de ambientes
+.env
+
+# Ignorar arquivos de configuração do editor
+.vscode/
+
+# Ignorar arquivos de teste
+test/
+
+# Ignorar arquivos zip
+data/*.zip
+
+# Ignorar arquivos de cache
+core/__pycache__/*
