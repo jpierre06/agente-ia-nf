@@ -12,3 +12,6 @@ data/*.zip
 
 # Ignorar arquivos de cache
 core/__pycache__/*
+
+# Ignorar arquivos venv Python
+agente_csv/*
