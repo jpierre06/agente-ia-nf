@@ -6,3 +6,5 @@ test/
 .git/
 .gitignore
 agente_csv/
+.vscode/
+.idea/
