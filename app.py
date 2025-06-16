@@ -10,7 +10,7 @@ with st.sidebar:
     "[Get an Gemini API key](https://aistudio.google.com/app/apikey)"
 
 st.title("💬 Chatbot")
-st.caption("🚀 Notas fiscais do mês de janeiro/2024 - disponibilizado pelo TCU")
+st.caption("🚀 Dados de Notas Fiscais - Disponibilizado pelo TCU")
 if "messages" not in st.session_state:
     st.session_state["messages"] = [{"role": "assistant", "content": "Faça sua pergunta?"}]
 
@@ -40,10 +40,12 @@ if prompt := st.chat_input():
             st.stop()
 
         try:
-            msg = run_csv_question_chain(prompt, {
-                "heads": data['202401_NFs_Cabecalho.csv'],
-                "items": data['202401_NFs_Itens.csv']
-            })
+            msg = run_csv_question_chain(
+                prompt, 
+                {"heads": data['202401_NFs_Cabecalho.csv'],
+                "items": data['202401_NFs_Itens.csv']}, 
+                api_key=api_key
+            )
         except Exception as e:
             msg = f"⚠️ Ocorreu um erro ao processar sua pergunta: {str(e)}"
 

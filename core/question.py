@@ -3,11 +3,15 @@ from langchain.chat_models import init_chat_model
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers.openai_tools import JsonOutputKeyToolsParser
 
-def run_csv_question_chain(question: str, locals: dict):
+def run_csv_question_chain(question: str, locals: dict, api_key: str):
     
     tool = PythonAstREPLTool(locals=locals)
 
-    llm = init_chat_model("gemini-2.0-flash", model_provider="google_genai")
+    llm = init_chat_model(
+        model="gemini-2.0-flash",
+        model_provider="google_genai",
+        api_key=api_key  # chave passada explicitamente
+    )
 
     llm_with_tool = llm.bind_tools(tools=[tool], tool_choice=tool.name)
 
