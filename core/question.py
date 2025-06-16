@@ -35,9 +35,8 @@ def run_csv_question_chain(question: str, locals: dict):
     parser = JsonOutputKeyToolsParser(key_name=tool.name, first_tool_only=True)
     chain = prompt | llm_with_tool | parser | tool
 
-    result = chain.invoke(
-        {
-            "question": question
-        }
-    )
-    return result
+    try:
+        result = chain.invoke({"question": question})
+        return result
+    except Exception as e:
+        return f"❌ Ocorreu um erro ao tentar responder sua pergunta. Detalhes técnicos: {str(e)}"
