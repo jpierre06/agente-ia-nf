@@ -59,10 +59,37 @@ def run_csv_question_chain(question: str, locals: dict, api_key: str):
     prompt = ChatPromptTemplate.from_messages([("system", system), ("human", "{question}")])
 
     parser = JsonOutputKeyToolsParser(key_name=tool.name, first_tool_only=True)
-    chain = prompt | llm_with_tool | parser | tool
+    
+    """      # Separar a cadeia para capturar o código ANTES de executar
+    chain_to_code = prompt | llm_with_tool | parser
+    generated_code = chain_to_code.invoke({"question": question})
 
     try:
-        result = chain.invoke({"question": question})
-        return result
+        result = tool.invoke({"question": question})
+        return result, generated_code
     except Exception as e:
-        return f"❌ Ocorreu um erro ao tentar responder sua pergunta. Detalhes técnicos: {str(e)}"
+        return f"❌ Ocorreu um erro ao tentar responder sua pergunta. Detalhes técnicos: {str(e)}" """
+
+    """     
+    chain = prompt | llm_with_tool | parser | tool
+    result = chain.invoke({"question": question})
+
+    # Recupera o último código executado
+    code_executado = getattr(tool, "last_code_executed", "Código indisponível")
+
+    return result, code_executado """
+
+
+      # Etapas separadas: gerar código -> executar
+    chain_to_code = prompt | llm_with_tool | parser
+    python_code = chain_to_code.invoke({"question": question})
+
+    try:
+        # Agora executa o código gerado
+        resultado = tool.invoke(python_code)
+        
+    except Exception as e:
+        resultado = f"⚠️ Ocorreu um erro ao processar sua pergunta: {str(e)}"
+        python_code = "Error."
+
+    return resultado, python_code
