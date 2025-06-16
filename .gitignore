@@ -18,4 +18,4 @@ core/__pycache__/*
 agente_csv/*
 
 # Ignorar arquivos de log
-logs/*.log
+logs/*
