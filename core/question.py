@@ -3,11 +3,15 @@ from langchain.chat_models import init_chat_model
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.output_parsers.openai_tools import JsonOutputKeyToolsParser
 
-def run_csv_question_chain(question: str, locals: dict):
+def run_csv_question_chain(question: str, locals: dict, api_key: str):
     
     tool = PythonAstREPLTool(locals=locals)
 
-    llm = init_chat_model("gemini-2.0-flash", model_provider="google_genai")
+    llm = init_chat_model(
+        model="gemini-2.0-flash",
+        model_provider="google_genai",
+        api_key=api_key  # chave passada explicitamente
+    )
 
     llm_with_tool = llm.bind_tools(tools=[tool], tool_choice=tool.name)
 
@@ -21,23 +25,44 @@ def run_csv_question_chain(question: str, locals: dict):
         for _df, df_name in [(locals["heads"], "heads"), (locals["items"], "items")]
     )
 
-    system = f"""You have access to a number of pandas dataframes. \
-    Here is a sample of rows from each dataframe and the python code that was used to generate the sample:
+    system = f"""
+    You are an agent specializing in analyzing tax data from Brazil.
+    To perform the analysis, you will have access to several Pandas dataframes.
+
+    Here is an example of rows from each dataframe and the Python code that was used to generate the example:
 
     {df_context}
 
-    Given a user question about the dataframes, write the Python code to answer it. \
-    Don't assume you have access to any libraries other than built-in Python ones and pandas. \
-    Make sure to refer only to the variables mentioned above."""
+    Given a user's question about tax information related to the dataframes, write the Python code to answer it.
+
+    You will only have access to the internal libraries of Python and Pandas.
+
+    Make sure to refer only to the variables mentioned above.
+
+    Make some assumptions about the data provided:
+        All information related to the "EMITENTE" is related to "Sales" and "Sellers";
+        All information related to the "DESTINATÁRIO" is related to "Purchases" and "Buyers";
+
+    All answers involving numeric values ​​must be in table format.
+    By default, return numerical values sorted in descending order.
+
+    There were questions that needed to be asked in more than one stage of data analysis.
+    For example:
+
+    * Identify the 5 states with the highest sales and, in each state, the 5 items with the highest sales.
+
+        1 - First, you will need to identify the 5 states with the highest sales;
+        2 - Using the list of states, identify the 5 items with the highest sales for each state;
+        3 - Return a complete list with the 5 items (identified in stage 2) with the highest sales in each state (identified in stage 1)
+    """
 
     prompt = ChatPromptTemplate.from_messages([("system", system), ("human", "{question}")])
 
     parser = JsonOutputKeyToolsParser(key_name=tool.name, first_tool_only=True)
     chain = prompt | llm_with_tool | parser | tool
 
-    result = chain.invoke(
-        {
-            "question": question
-        }
-    )
-    return result
+    try:
+        result = chain.invoke({"question": question})
+        return result
+    except Exception as e:
+        return f"❌ Ocorreu um erro ao tentar responder sua pergunta. Detalhes técnicos: {str(e)}"
