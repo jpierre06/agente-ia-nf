@@ -37,3 +37,4 @@ def load_dataframes_from_folders() -> dict[str, pd.DataFrame] | str:
         "heads": heads_df,
         "items": items_df
     }
+
