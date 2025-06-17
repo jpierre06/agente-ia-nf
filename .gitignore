@@ -3,6 +3,7 @@
 
 # Ignorar arquivos de configuração do editor
 .vscode/
+.idea/
 
 # Ignorar arquivos de teste
 test/
@@ -12,3 +13,9 @@ data/*.zip
 
 # Ignorar arquivos de cache
 core/__pycache__/*
+
+# Ignorar arquivos venv Python
+agente_csv/*
+
+# Ignorar arquivos de log
+logs/*
