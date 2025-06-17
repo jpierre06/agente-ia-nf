@@ -19,5 +19,8 @@ def save_chat_log(question: str, answer: str, code: str, save_dir: str = "./logs
         ]
     }
 
-    with open(filepath, "w", encoding="utf-8") as f:
-        json.dump(log_data, f, ensure_ascii=False, indent=4)
+    try:
+        with open(filepath, "w", encoding="utf-8") as f:
+            json.dump(log_data, f, ensure_ascii=False, indent=4)
+    except Exception as e:
+        return f"❌ Ocorreu um erro ao salvar o histórico do chat: {str(e)}"
