@@ -7,7 +7,7 @@ Bem-vindo ao **Desbravando IA**! Este repositório reúne projetos e experimento
 Este repositório utiliza as seguintes tecnologias:
 
 - [Python](https://www.python.org/): Linguagem principal para desenvolvimento dos projetos.
-- **Docker**: Para criar ambientes isolados e facilitar a execução dos projetos.
+- [Docker](https://www.docker.com/): Para criar ambientes isolados e facilitar a execução dos projetos.
 - [Pandas](https://pandas.pydata.org/): Para manipulação e análise de dados.
 - [LangChain](https://www.langchain.com/): Para construção de aplicações baseadas em modelos de linguagem.
 - [Streamlit](https://streamlit.io/): Para criação de interfaces interativas e visualização de resultados.
@@ -17,7 +17,7 @@ Este repositório utiliza as seguintes tecnologias:
 ### 🌐 Acesso na Web
 
 A versão online do sistema está disponível em:
-🔗 https://seu-projeto.com
+🔗 https://agente-ia-nf-develop-axv8udenawvkma28u6uc7y.streamlit.app/
 
 ### 📥 Para uso local
 
@@ -27,23 +27,22 @@ A versão online do sistema está disponível em:
     ```
 2. **Construa a imagem Docker**:
     ```bash
-    docker-compose --build
+    docker-compose build
     ```
 3. **Execute o container**:
     ```bash
     docker-compose up -d
     ```
 4. **Acesse a aplicação**:
-    - Abra o navegador e vá para `http://localhost:8501` para interagir com a interface criada em Streamlit.
-
+    - Abra o navegador e vá para `http://0.0.0.0:8501/` para interagir com a interface criada em Streamlit.
 
 ## 📁 Estrutura do Projeto
 
 A solução foi organizada de forma a facilitar a navegação e o entendimento, tanto para iniciantes quanto para desenvolvedores experientes. Abaixo está a estrutura principal do repositório:
 
-- **/core**: Contém projetos práticos de IA, cada um em sua própria pasta, com código-fonte, exemplos e explicações detalhadas.
+- **/core**: Contém arquivos com as funções de ler arquivos .csv `get_csv_content`, carregar dataframe apartir de arquivo .zip `load_dataframes`, salvar histórico de logs `save_chat_log` e fazer perguntas sobre os arquivos para a LLM `run_csv_question_chain`.
 - **/data**: Contém arquivo .zip que compacta arquivos .csv utilizados por agente de IA.
-- **/pages**: Páginas construidas utilizando streamlit.
+- **/pages**: Contém as páginas de listagem de cabeçalhos e itens de notas fiscais construidas utilizando streamlit.
 - **requirements.txt**: Lista todas as dependências necessárias para executar os projetos localmente.
 - **Dockerfile**: Arquivo para criar um ambiente Docker isolado, garantindo que a solução funcione de forma consistente em diferentes sistemas.
 - **app.py**: Arquivo principal para a interface interativa criada com Streamlit, permitindo a visualização e interação com os resultados dos projetos.
