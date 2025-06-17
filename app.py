@@ -1,15 +1,15 @@
 import os
 import streamlit as st
 from core.question import run_csv_question_chain
-#from core.csv import get_csv_content
-from core.data_loader import load_dataframes
+from core.data_loader import load_dataframes_from_folders
 from core.logger import save_chat_log
+import core.zip_processor as zp
 
 # Configurações do Streamlit
 with st.sidebar:  
     api_key = st.text_input("Gemini API Key", key="chatbot_api_key", type="password")
     "[Get an Gemini API key](https://aistudio.google.com/app/apikey)"
-    save_history = st.checkbox("Salvar histórico da conversa", value=False)
+    save_history = st.checkbox("Salvar log do histórico da conversa", value=False)
     
 
 st.title("💬 Chatbot")
@@ -27,16 +27,16 @@ if prompt := st.chat_input("Digite sua pergunta sobre os dados..."):
         st.stop()
     
     os.environ["GOOGLE_API_KEY"] = api_key
+
+    # Verifica a existência de novos arquivos ZIP para processar
+    zp.process_zip_files()
     
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.chat_message("user").write(prompt)
     
     with st.spinner("🔍 Analisando sua pergunta e consultando os dados..."):
 
-        data = load_dataframes('data/202401_NFs.zip', [
-        '202401_NFs_Cabecalho.csv',
-        '202401_NFs_Itens.csv'
-        ])
+        data = load_dataframes_from_folders()
 
         if isinstance(data, str):  # erro ao carregar
             st.session_state.messages.append({"role": "assistant", "content": f"❌ {data}"})
@@ -48,8 +48,7 @@ if prompt := st.chat_input("Digite sua pergunta sobre os dados..."):
         try:
             msg, code = run_csv_question_chain(
                 prompt, 
-                {"heads": data['202401_NFs_Cabecalho.csv'],
-                "items": data['202401_NFs_Itens.csv']}, 
+                {"heads": data["heads"], "items": data["items"]}, 
                 api_key=api_key
             )
         except Exception as e:

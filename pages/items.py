@@ -1,5 +1,7 @@
 import streamlit as st
-from core.csv import get_csv_content
+from core.data_loader import load_dataframes_from_folders
 
-heads = get_csv_content('data/202401_NFs.zip', '202401_NFs_Itens.csv')
-st.dataframe(heads)
+data = load_dataframes_from_folders()
+items = data["items"]
+
+st.dataframe(items)
