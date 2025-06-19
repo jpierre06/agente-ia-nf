@@ -40,8 +40,8 @@ def run_csv_question_chain(question: str, locals: dict, api_key: str):
     Make sure to refer only to the variables mentioned above.
 
     Make some assumptions about the data provided:
-        All information related to the "EMITENTE" is related to "Sales" and "Sellers";
-        All information related to the "DESTINATÁRIO" is related to "Purchases" and "Buyers";
+        All information related to the "emitente" is related to "Sales" and "Sellers";
+        All information related to the "destinatario" is related to "Purchases" and "Buyers";
 
     All answers involving numeric values ​​must be in table format.
     By default, return numerical values sorted in descending order.
@@ -60,27 +60,7 @@ def run_csv_question_chain(question: str, locals: dict, api_key: str):
 
     parser = JsonOutputKeyToolsParser(key_name=tool.name, first_tool_only=True)
     
-    """      # Separar a cadeia para capturar o código ANTES de executar
-    chain_to_code = prompt | llm_with_tool | parser
-    generated_code = chain_to_code.invoke({"question": question})
-
-    try:
-        result = tool.invoke({"question": question})
-        return result, generated_code
-    except Exception as e:
-        return f"❌ Ocorreu um erro ao tentar responder sua pergunta. Detalhes técnicos: {str(e)}" """
-
-    """     
-    chain = prompt | llm_with_tool | parser | tool
-    result = chain.invoke({"question": question})
-
-    # Recupera o último código executado
-    code_executado = getattr(tool, "last_code_executed", "Código indisponível")
-
-    return result, code_executado """
-
-
-      # Etapas separadas: gerar código -> executar
+    # Etapas separadas: gerar código -> executar
     chain_to_code = prompt | llm_with_tool | parser
     python_code = chain_to_code.invoke({"question": question})
 

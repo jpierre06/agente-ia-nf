@@ -3,11 +3,40 @@ from pathlib import Path
 #import core.zip_processor as zp
 import unicodedata
 import re
+import io
 
 HEADS_DIR = Path("./data/csv/heads")
 ITEMS_DIR = Path("./data/csv/items")
 
+def get_info_df(df: pd.DataFrame) -> str:
+    """Retorna informações básicas do DataFrame."""
+    buffer = io.StringIO()
+    df.info(buf=buffer)
 
+    info_str = buffer.getvalue()
+
+    # Quebrar por linhas
+    lines_str = info_str.split('\n')
+
+    # Extrair as linhas das colunas (começam geralmente na 5ª linha até a penúltima)
+    lines_columns = lines_str[5:-3]  # pode variar dependendo do pandas
+
+    # Parse manual das colunas
+    data_info = []
+    for lines in lines_columns:
+        line_parts = lines.strip().split()
+        if len(line_parts) >= 3:
+            nome_coluna = line_parts[1]
+            n_nao_nulos = line_parts[2]
+            tipo_dado = line_parts[-1]
+            data_info.append({
+                'coluna': nome_coluna,
+                'não_nulos': n_nao_nulos,
+                'tipo': tipo_dado
+            })
+
+    # Criar DataFrame dicionário de dados
+    return pd.DataFrame(data_info)
 
 def normalize_column_name(columns_name):
     normalize_column = []
